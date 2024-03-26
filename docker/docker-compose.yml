@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  sql-db:
+    image: mysql:8.3.0
+    container_name: sql-db
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+#    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=mydb
+      - MYSQL_USER=name
+      - MYSQL_PASSWORD=password
+    volumes:
+      - ./database/init.d:/docker-entrypoint-initdb.d
+      - ./database/conf/my.conf:/etc/mysql/conf.d/my.conf:ro
+      # data
+      - ./database/data:/var/lib/mysql
+
+
+    networks:
+      - server_network
+  ktor-app:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      sql-db:
+        condition: service_healthy
+    environment:
+      - JDBC_DATABASE_URL=jdbc:mysql://sql-db:3306/mydb
+      - JDBC_DATABASE_USERNAME=name
+      - JDBC_DATABASE_PASSWORD=password
+    networks:
+      - server_network
+
+networks:
+  server_network:
+    driver: bridge
