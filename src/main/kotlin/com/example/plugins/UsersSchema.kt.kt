@@ -1,15 +1,14 @@
 package com.example.plugins
 
-import com.example.plugins.UserService.Users
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 
 
 data class ExposedUser(val name: String, val age: Int)
-class UserService(private val database: Database) {
+class UserService(database: Database) {
     object Users : Table() {
         val id = integer("id").autoIncrement()
         val name = varchar("name", length = 50)
@@ -24,7 +23,7 @@ class UserService(private val database: Database) {
         }
     }
 
-    suspend fun <T> dbQuery(block: suspend () -> T): T =
+    private suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
     suspend fun create(user: ExposedUser): Int = dbQuery {

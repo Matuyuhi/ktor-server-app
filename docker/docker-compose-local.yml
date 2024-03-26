@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  sql-db-local:
+    image: mysql:8.3.0
+    container_name: sql-db-local
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=mydb
+      - MYSQL_USER=name
+      - MYSQL_PASSWORD=password
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    volumes:
+      - ./local/init.d:/docker-entrypoint-initdb.d
+      - ./local/conf/my.conf:/etc/mysql/conf.d/my.conf:ro
+      # data
+      - ./local/data:/var/lib/mysql

@@ -10,8 +10,11 @@ import org.jetbrains.exposed.sql.*
 fun Application.configureDatabases() {
     val jdbcDatabaseUrl = System.getenv("JDBC_DATABASE_URL")
         ?: "jdbc:mysql://localhost:3306/mydb"
-    val username = System.getenv("JDBC_DATABASE_USERNAME") ?: "user"
+    val username = System.getenv("JDBC_DATABASE_USERNAME") ?: "name"
     val password = System.getenv("JDBC_DATABASE_PASSWORD") ?: "password"
+    println("JDBC_DATABASE_URL: $jdbcDatabaseUrl")
+    println("JDBC_DATABASE_USERNAME: $username")
+    println("JDBC_DATABASE_PASSWORD: $password")
     val database = Database.connect(
         url = jdbcDatabaseUrl,
         driver = "com.mysql.cj.jdbc.Driver",

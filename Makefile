@@ -6,3 +6,6 @@ stop:
 	docker compose -f docker/docker-compose.yml down
 build:
 	docker compose -f docker/docker-compose.yml build --no-cache
+
+local-db:
+	docker compose -f docker/docker-compose-local.yml up -d
